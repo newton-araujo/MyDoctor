@@ -47,7 +47,7 @@ def main(page: ft.Page):
             color=ft.colors.BLACK,
             label_style=ft.TextStyle(
             size=13
-            ),
+            )
         )
     password = ft.TextField(
             label="SENHA",
@@ -102,6 +102,21 @@ def main(page: ft.Page):
             disabled=True                
         )
 
+    #Acesso ao sistema
+    def acessar(e, user, senha):
+        if user == "newton" and senha == "admin":
+            page.clean()
+            menu_central()  # Certifique-se de que essa função esteja definida
+            print("Deu certo")
+            page.update()
+        else:
+            print(f"esse é o user: {user}")
+            page.snack_bar = ft.SnackBar(
+                content=ft.Text(value="Erro ao acessar", color=ft.colors.WHITE),
+                bgcolor=ft.colors.RED
+            )
+            page.snack_bar.open = True
+            page.update()
 
     #---CADASTRAR USUARIO
     def cadastrar_usuario():
@@ -109,7 +124,7 @@ def main(page: ft.Page):
         
         #Salvar Usuario
         def salvar_usuario(e, nome,email,cpf_user,user_password,user_conf_password):
-            
+             
             try:
                 #Condição para verificar se os campos estao preenchidos
                 if not (nome and email and cpf_user and user_password and user_conf_password):
@@ -440,22 +455,366 @@ def main(page: ft.Page):
     )
         page.add(pg_esqueci_senha)
     
+    def menu_central():
+        page.clean()
+        
+        opcoes = ft.Row( #Container opcoes
+            [   
+                #Acresentar funcionalidade em todo os botões
+                
+                #titulo e boas vindas
+                ft.Container(
+                    width=340,
+                    height=80,
+                    bgcolor='#71D4D6',
+                    content=ft.Column(
+                        [
+                            ft.Container( #Boa vindas buscando o nome do usuario
+                                width=350,
+                                height=30,
+                                content=ft.Row( #Boa vindas buscando o nome do usuario
+                                  [
+                                    ft.Row(
+                                            [
+                                                ft.Text(value=f"Olá {nm_user.value}",color=ft.colors.BLACK45,size=19)
+                                            ],
+                                alignment=ft.MainAxisAlignment.END,
+                                width=330,
+                                height=20,
+                            ),
+                                  ],
+                                  width=250,
+                                ),
+                                padding=ft.padding.all(2),
+                                margin=ft.margin.only(right=10)
+                            ),
+                            
+                            ft.Container( #Titulo 
+                                width=350,
+                                height=50,
+                                content=ft.Row(#Descrição do titulo
+                                    [   
+                                        ft.Icon(name=ft.icons.MEDICAL_INFORMATION,color=ft.colors.WHITE,size=28),
+                                        ft.Text(value="MYDOCTOR", color=ft.colors.WHITE,size=30,weight=ft.FontWeight.BOLD,)
+                                    ],
+                                alignment=ft.MainAxisAlignment.CENTER,
+                                width=250,
+                                height=40, 
+                               ),
+                            ),
+                        ],
+                        spacing=1
+                        
+                    ),
+                    border_radius=ft.border_radius.all(10),
+                    #padding=ft.padding.all(2)
+                ),
+                
+                #MINHA SAUDE
+                ft.Container(
+                    width=150,
+                    height=150,
+                    bgcolor='#71D4D6',
+                    border_radius=ft.border_radius.all(10),
+                    content= ft.Column(
+                        [
+                            #Botão Minha Saude
+                            ft.Container(
+                                width=150,
+                                height=120,
+                                content=ft.Column(
+                                    [
+                                        ft.Row(
+                                            [
+                                            ft.Container(#Container com ICON
+                                                width=100,
+                                                height=100,
+                                                bgcolor=ft.colors.BLACK45,
+                                                border_radius=ft.border_radius.all(50),
+                                                content=ft.Row(
+                                                    [
+                                                        ft.Icon(
+                                                            name=ft.icons.MONITOR_HEART,
+                                                            color=ft.colors.WHITE,
+                                                            size=80
+                                                        )
+                                                  
+                                                
+                                                ],
+                                                alignment=ft.MainAxisAlignment.CENTER,
+                                            ),
+                                            margin=ft.margin.only(top=5)
+                                            ),
+                                                ],
+                                            width=150,
+                                            alignment=ft.MainAxisAlignment.CENTER
+                                        ),
+                                        ft.Row( #Descriçao do BOX
+                                            [
+                                                ft.Text(
+                                                    value="Minha Saúde",
+                                                    color=ft.colors.WHITE,
+                                                    weight=ft.FontWeight.BOLD,
+                                                    size=20,
+                                                    )
+                                            ],
+                                            alignment=ft.MainAxisAlignment.CENTER
+                                        )
+                                    ],
+                                    alignment=ft.MainAxisAlignment.CENTER,
+                                )
+                                
+                            )
+                        ]
+                    ),
+                    on_click= lambda _:print("Minha Saúde") #Implantar funçao aqui
+                  
+                ),
+                
+                #Meu cartao saúde
+                ft.Container(
+                    width=150,
+                    height=150,
+                    bgcolor='#71D4D6',
+                    border_radius=ft.border_radius.all(10), 
+                    content=ft.Column(
+                        [
+                            ft.Container(
+                                width=150,
+                                height=120,
+                                content=ft.Column(
+                                    [
+                                        ft.Row(
+                                            [
+                                            ft.Container( #Botão Cartão Saude
+                                                width=100,
+                                                height=100,
+                                                bgcolor=ft.colors.BLACK45,
+                                                border_radius=ft.border_radius.all(50),
+                                                content=ft.Icon(
+                                                    name=ft.icons.CREDIT_CARD,
+                                                    color=ft.colors.WHITE,
+                                                    size=80
+                                                )
+                                            )
+                                        ],
+                                        width=150,
+                                        alignment=ft.MainAxisAlignment.CENTER,
+                                        ),
+                                        
+                                        ft.Row(
+                                            [
+                                                ft.Text( #Descrição do box cartão saude
+                                                    value="Cartão Saúde",
+                                                    color=ft.colors.WHITE,
+                                                    weight=ft.FontWeight.BOLD,
+                                                    size=20
+                                                    )
+                                            ],
+                                            alignment=ft.MainAxisAlignment.CENTER
+                                            
+                                        ),
+                                        
+                                    ],
+                                    
+                                ),
+                                margin=ft.margin.only(top=5)
+                            ),
+                        ],
+                        
+                        
+                    ),
+                    on_click= lambda _:print("Cartão saude") #Implantar função aqui
+                    
+                    
+                ),
+                    
+                #Agendar Exames    
+                ft.Container(
+                    width=150,
+                    height=150,
+                    bgcolor='#71D4D6',
+                    content=ft.Column(
+                        [
+                            ft.Container(
+                                width=150,
+                                height=120,
+                                content=ft.Column(
+                                    [
+                                       ft.Row(
+                                           [
+                                               ft.Container(
+                                                   width=100,
+                                                   height=100,
+                                                   bgcolor=ft.colors.BLACK45,
+                                                   border_radius=ft.border_radius.all(50),
+                                                   content=ft.IconButton(
+                                                               icon=ft.icons.MEDICAL_INFORMATION,
+                                                               icon_color=ft.colors.WHITE,
+                                                               icon_size=60
+                                                           )
+                                                       
+                                                   ,
+                                                   margin=ft.margin.only(top=5),
+                                                   
+                                                   
+                                               )
+                                           ],alignment=ft.MainAxisAlignment.CENTER
+                                       ),
+                                       ft.Row(
+                                           [
+                                               ft.Text(value="Agendar Exames",
+                                                       color=ft.colors.WHITE,
+                                                       weight=ft.FontWeight.BOLD,
+                                                       size=16,
+                                                       
+                                                       )
+                                           ],
+                                           alignment=ft.MainAxisAlignment.CENTER
+                                       )
+                                    ]
+                                )
+                                
+                                
+                                
+                              
+                            )
+                        ]
+                    ) 
+                ),
+
+                #Agendar Consulta
+                ft.Container(
+                    width=150,
+                    height=150,
+                    bgcolor='#71D4D6',
+                    border_radius=ft.border_radius.all(10)
+                ),
+                
+                ft.Container(
+                    width=150,
+                    height=150,
+                    bgcolor='#71D4D6',
+                    border_radius=ft.border_radius.all(10)#Meus Agendamentos
+                ),
+                   
+                   #Sair do sistema
+                
+                ft.Container(
+                    width=150,
+                    height=150,
+                    bgcolor='#71D4D6', 
+                    content=ft.Column(
+                        [
+                          ft.Container(
+                              width=150,
+                              height=120,
+                              content=ft.Column(
+                                  [
+                                      ft.Row(
+                                          [
+                                             ft.Container( #Icon sair do sistema
+                                                 width=100,
+                                                 height=100,
+                                                 bgcolor=ft.colors.BLACK45,
+                                                 border_radius=ft.border_radius.all(50),
+                                                 content= ft.IconButton(
+                                                    icon=ft.icons.EXIT_TO_APP,
+                                                    icon_color=ft.colors.WHITE,
+                                                    icon_size=80,
+                                                    on_click= lambda _: pagina_inicial()
+                                                ),
+                                                 margin=ft.margin.only(top=5)
+                                             )
+                                          ],
+                                          alignment=ft.MainAxisAlignment.CENTER
+                                      ),
+                                      
+                                      ft.Row( #Descrição do BOX SAIR do sistema
+                                          [
+                                              ft.Text( 
+                                                  value="Sair",
+                                                  weight=ft.FontWeight.BOLD,
+                                                  color=ft.colors.WHITE,
+                                                  size=20
+                                              )
+                                          ],
+                                          alignment=ft.MainAxisAlignment.CENTER
+                                      )
+                                  ],
+                                  spacing=2
+                                
+                              )
+                          )
+                        ]
+                    )
+                ),
+            ],
+            wrap=True,
+            alignment=ft.MainAxisAlignment.CENTER
+            
+        )
+        
+        pg_menu_central = ft.Container(
+            bgcolor=ft.colors.WHITE,
+            width=500,
+            height=600,
+            border_radius=ft.border_radius.all(10),
+            margin=ft.margin.only(right=2, left=2),
+            shadow=ft.BoxShadow(
+                blur_radius=60,
+                spread_radius=2,
+                color=ft.colors.BLACK45,
+                offset=ft.Offset(1, 1)
+            ),
+            content=ft.Column(
+                [
+                    ft.Container(
+                        width=500,
+                        height=500,
+                        margin=ft.margin.only(top=2),
+                        content=ft.Row(
+                                [
+                                    opcoes
+                                ],
+                            wrap=True
+                        ),
+                        alignment=ft.alignment.center
+                    )
+                    
+                ]
+            )
+        )
+        
+        page.add(pg_menu_central)
+    
+          
+        
+    
     #--PAGINA INICIAL
     def pagina_inicial():
         page.clean()
+            
+       
+        
         # Título - LOGIN
         titulo = ft.Column(
             [
                 ft.Row(
                     [
-                        ft.Image(src="images/cruzazul.png", width=100)
+                        ft.Icon(
+                            name=ft.icons.MEDICAL_SERVICES,
+                            size=100,
+                            color="#71D4D6",
+                            
+                            )
                     ],
                     alignment=ft.MainAxisAlignment.CENTER,
                 ),
                 ft.Row(
                     [
                         ft.Text(
-                            value="MyDoctor",
+                            value="MYDOCTOR",
                             size=40,
                             weight=ft.FontWeight.BOLD,
                             color=ft.colors.BLACK
@@ -471,28 +830,13 @@ def main(page: ft.Page):
             [
                 ft.Row(
                     [
-                        ft.TextField(
-                            label="EMAIL",
-                            width=250,
-                            height=40,
-                            prefix_icon=ft.icons.EMAIL,
-                            color=ft.colors.BLACK,
-                            
-                        )
+                       nm_user
                     ],
                     alignment=ft.MainAxisAlignment.CENTER,
                 ),
                 ft.Row(
                     [
-                        ft.TextField(
-                            label="PASSWORD",
-                            width=250,
-                            height=40,
-                            prefix_icon=ft.icons.PASSWORD,
-                            color=ft.colors.BLACK,
-                            password=True,
-                            can_reveal_password=True
-                        )
+                        password
                     ],
                     alignment=ft.MainAxisAlignment.CENTER
                 )
@@ -508,7 +852,7 @@ def main(page: ft.Page):
                         text="ENTRAR", #----- ENTRAR
                         bgcolor=ft.colors.GREEN_300,
                         color=ft.colors.WHITE,
-                        on_click=lambda _:print("Criar função para Entrar no sistema")
+                        on_click=lambda e: acessar(e,nm_user.value,password.value)
                         
                         ),
                     ft.ElevatedButton(
@@ -582,5 +926,5 @@ def main(page: ft.Page):
         
 
     
-    pagina_inicial()
+    menu_central()
 ft.app(main,assets_dir="assets")
