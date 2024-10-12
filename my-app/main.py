@@ -1,6 +1,6 @@
 import flet as ft
-from DataBase.mydoctordb import new_cadastrar_usuario
-from time import sleep
+from Database.connect_firebase import initialize_firebase
+from Database.CRUD import cadastrar_cliente,validar_autenticacao, buscar_dados,resetar_senha
 
 
 def main(page: ft.Page):
@@ -94,21 +94,22 @@ def main(page: ft.Page):
                 disabled=True                
             )
 
-    def acessar(e, user, senha):
-        if user == "newton" and senha == "admin":
+    def acessar(e, name, senha):
+        
+        result = validar_autenticacao(name, senha)
+        
+        if result:
             page.clean()
             menu_central()  # Certifique-se de que essa função esteja definida
-            print("Deu certo")
             page.update()
         else:
-            print(f"esse é o user: {user}")
             page.snack_bar = ft.SnackBar(
                 content=ft.Text(value="Erro ao acessar", color=ft.colors.WHITE),
                 bgcolor=ft.colors.RED
             )
             page.snack_bar.open = True
             page.update()
-    
+            
     #Menu central
     def menu_central():
         page.clean()
@@ -583,28 +584,27 @@ def main(page: ft.Page):
                 
                 
                 #Retorno dos dados do banco -- TRUE (Caso os dados sejam salvo) False(Caso os dados já existem)
-                result = new_cadastrar_usuario(nome,email,cpf_user,user_password)
+                result = cadastrar_cliente(nome,email,cpf_user,user_password)
+
                 
-                #Caso o cadastro seja efetuado aparecera uma mensagem para o usuario
                 if result:
                     page.snack_bar = ft.SnackBar(
-                        content=ft.Text(value=f"{result}",color=ft.colors.WHITE),
-                        bgcolor=ft.colors.GREEN_300
-                    )
+                                        content=ft.Text(value="Cadastrado com Sucesso!",color=ft.colors.WHITE),
+                                        bgcolor=ft.colors.GREEN_300
+                                    )
                     page.snack_bar.open = True
                     page.update()
-                    
-                    #RESENTANDO OS VALORES
+
                     nm_user.value = ""
                     email_user.value = ""
                     cpf.value = ""
                     password.value = ""
                     confirme_password.value = ""
-                    
+
                     pagina_inicial()
-                    
+                
                 #Caso o CPF já conste na base de dados o usuario sera informado
-                else:
+                if not result :
                     page.snack_bar = ft.SnackBar(
                         content=ft.Text(value="CPF já Cadastrado",color=ft.colors.WHITE),
                         bgcolor=ft.colors.RED
@@ -612,6 +612,9 @@ def main(page: ft.Page):
                     page.snack_bar.open = True
                     page.update()
                     return
+                
+                    
+                
                 #Em caso de erro aparecera uma mensagem para o usuario pedindo para entrar em contato com o SUPORTE
             except NameError as e:
                     page.snack_bar = ft.SnackBar(
@@ -734,6 +737,41 @@ def main(page: ft.Page):
     #Reset de senha
     def reset_senha():
         page.clean()
+        def salva_nova_senha(e,cpf,nova_senha):
+            
+            result = resetar_senha(cpf,nova_senha)
+
+            if result:
+                page.snack_bar = ft.SnackBar(
+                    ft.Text(value=f'{result}',color=ft.colors.WHITE),
+                    bgcolor=ft.colors.BLUE_200
+                )
+            
+            if not result:
+                    page.snack_bar = ft.SnackBar(
+                    ft.Text(value=f'{result}',color=ft.colors.WHITE),
+                    bgcolor=ft.colors.RED
+                )
+        #buscando Usuario para reset de senha           
+        def search_user(e,email,cpf):
+            result = buscar_dados(email,cpf)
+            print(email)
+            print(cpf)
+            print(result)
+                
+            if result:
+                new_password.disabled = False
+                confirm_new_password.disabled = False
+                page.update()
+
+            if not result:
+                page.snack_bar = ft.SnackBar(
+                    content=ft.Text(value="Dados não localizado", color=ft.colors.BLACK),
+                    bgcolor=ft.colors.YELLOW
+                    )
+                page.snack_bar.open = True
+                page.update()
+        
         #--Titulo de RESET SENHA
         titulo_reset = ft.Column(
             [
@@ -814,8 +852,8 @@ def main(page: ft.Page):
                                 text="BUSCAR",
                                 bgcolor=ft.colors.BLUE_400,
                                 color=ft.colors.WHITE,
-                                icon=ft.icons.SEARCH
-                                #-- IMPLANTAR FUNCAO PARA BUSCAR CPF OU EMAIL
+                                icon=ft.icons.SEARCH,
+                                on_click= lambda e: search_user(e,email_user.value,cpf.value)
                                 ),
                             ft.ElevatedButton(
                                 text="SALVAR",
@@ -935,7 +973,7 @@ def main(page: ft.Page):
                             text="ENTRAR", #----- ENTRAR
                             bgcolor=ft.colors.GREEN_300,
                             color=ft.colors.WHITE,
-                            on_click=lambda e: acessar(e,nm_user.value,password.value)
+                            on_click=lambda e: acessar(e,nm_user.value,password.value) 
                             
                             ),
                         ft.ElevatedButton(
