@@ -40,9 +40,9 @@ def validar_autenticacao(nome, senha):
         usuarios_r = users_ref.get()
         acesso = False
         
-        for key, value in usuarios_r.items():
+        for k, v in usuarios_r.items():
             
-            if value['nome'] == nome and value['senha'] == senha:
+            if v.get('nome') == nome and v.get('senha') == senha:
                 acesso = True
         
         if acesso:
@@ -75,19 +75,23 @@ def buscar_dados(email,cpf):
         return f"Erro: {e}"
         
 
-def resetar_senha(cpf,nova_senha):
-    
+def resetar_senha(cpf, email, nova_senha):
     usuarios = users_ref.get()
-    
+    encontrado = False
     try:
         for k, v in usuarios.items():
-            
-            if v['cpf'] == cpf:
-                v['senha'] = nova_senha
-                return 'Senha atualizada com sucesso'
+            if v.get('cpf') == cpf or v.get('email') == email:
+                users_ref.child(k).update({'senha': nova_senha})
+                encontrado = True
+                break  
+
+        if encontrado:
+            return 'Senha atualizada com sucesso.'
+        else:
+            return 'Erro: Usuário não encontrado.'
         
     except Exception as e:
         return f'Erro: {e}'
-    
+
     
         

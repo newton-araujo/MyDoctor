@@ -93,22 +93,6 @@ def main(page: ft.Page):
                 ),
                 disabled=True                
             )
-
-    def acessar(e, name, senha):
-        
-        result = validar_autenticacao(name, senha)
-        
-        if result:
-            page.clean()
-            menu_central()  # Certifique-se de que essa função esteja definida
-            page.update()
-        else:
-            page.snack_bar = ft.SnackBar(
-                content=ft.Text(value="Erro ao acessar", color=ft.colors.WHITE),
-                bgcolor=ft.colors.RED
-            )
-            page.snack_bar.open = True
-            page.update()
             
     #Menu central
     def menu_central():
@@ -545,9 +529,13 @@ def main(page: ft.Page):
     #Cadastrar usuario
     def cadastrar_usuario():
         page.clean()
-        
+        nm_user.value = ''
+        password.value = ''
+        page.update
+             
         #Salvar Usuario
         def salvar_usuario(e, nome,email,cpf_user,user_password,user_conf_password):
+            
              
             try:
                 #Condição para verificar se os campos estao preenchidos
@@ -570,6 +558,8 @@ def main(page: ft.Page):
                         bgcolor=ft.colors.RED
                     )
                     page.snack_bar.open = True
+                    password.border_color = ft.colors.RED
+                    confirme_password.border_color = ft.colors.RED
                     page.update()
                     return
                 
@@ -593,6 +583,7 @@ def main(page: ft.Page):
                                         bgcolor=ft.colors.GREEN_300
                                     )
                     page.snack_bar.open = True
+                    password.border_color = ft.colors.BLACK
                     page.update()
 
                     nm_user.value = ""
@@ -734,24 +725,56 @@ def main(page: ft.Page):
     )
         page.add(pg_cadastrar)
 
-    #Reset de senha
+    #Reset de senha 
     def reset_senha():
         page.clean()
-        def salva_nova_senha(e,cpf,nova_senha):
+    
+        def salva_nova_senha(e,cpf_u,email,nova_senha): 
+                
+            if new_password.value != confirm_new_password.value:
+                
+                page.snack_bar = ft.SnackBar(
+                    ft.Text(
+                        value= "Senhas não conferem",
+                        color= ft.colors.BLACK),
+                    bgcolor=ft.colors.RED
+                )
+                page.snack_bar.open = True
+                new_password.border_color = ft.colors.RED
+                confirm_new_password.border_color = ft.colors.RED
+                page.update()
+                return
             
-            result = resetar_senha(cpf,nova_senha)
+            
+            result = resetar_senha(cpf_u,email,nova_senha)
 
-            if result:
+            if result == 'Senha atualizada com sucesso.':
                 page.snack_bar = ft.SnackBar(
                     ft.Text(value=f'{result}',color=ft.colors.WHITE),
-                    bgcolor=ft.colors.BLUE_200
+                    bgcolor=ft.colors.GREEN
                 )
+                
+                page.snack_bar.open = True
+                page.update()
+                
+                cpf.value = ''
+                email_user.value = ''
+                new_password.value = ''
+                confirm_new_password.value = ''
+                page.update()
+                pagina_inicial()
+                
             
-            if not result:
+            if result == 'Erro: Usuário não encontrado.':
                     page.snack_bar = ft.SnackBar(
                     ft.Text(value=f'{result}',color=ft.colors.WHITE),
                     bgcolor=ft.colors.RED
                 )
+
+                    page.snack_bar.open = True
+                    page.update()
+                    
+                
         #buscando Usuario para reset de senha           
         def search_user(e,email,cpf):
             result = buscar_dados(email,cpf)
@@ -860,7 +883,7 @@ def main(page: ft.Page):
                                 bgcolor=ft.colors.GREEN_300,
                                 color=ft.colors.WHITE,
                                 icon=ft.icons.SAVE,
-                                on_click= lambda _: pagina_inicial() #-- IMPLANTAR FUNÇAO PARA SALVAR NOVA SENHA
+                                on_click= lambda e: salva_nova_senha(e,cpf.value,email_user.value,new_password.value)  #-- IMPLANTAR FUNÇAO PARA SALVAR NOVA SENHA
                                 
                             )
                         ],
@@ -911,12 +934,136 @@ def main(page: ft.Page):
         )
     )
         page.add(pg_esqueci_senha)
+
+    
+    def minha_saude():
+        page.clean()
+        
+        
+        header_minha_saude = ft.Row(
+            [
+            ft.Container(#Menu suspenso 
+                    width=65,
+                    height=65,
+                    bgcolor="#71D4D6",
+                    border_radius=ft.border_radius.all(50),
+                    content=ft.Row(
+                        [
+                            ft.PopupMenuButton(
+                                icon=ft.icons.MENU,
+                                icon_color=ft.colors.BLACK,
+                                icon_size=40,
+                                bgcolor=ft.colors.BLACK,
+                                items= [
+                                    ft.PopupMenuItem( #Cadastrar Saúde
+                                        content= ft.Row(
+                                            [   
+                                                ft.Icon(name=ft.icons.MONITOR_HEART,color=ft.colors.WHITE,size=30),
+                                                ft.Text("Minha Saúde",size=20, color=ft.colors.WHITE),
+                                            ],
+                                            alignment=ft.VerticalAlignment.CENTER
+                                        )
+                                    ),
+                                      ft.PopupMenuItem( #Tratamento
+                                        content= ft.Row(
+                                            [   
+                                                ft.Icon(name=ft.icons.HEALTH_AND_SAFETY,color=ft.colors.WHITE,size=30),
+                                                ft.Text("Tratamento",size=20, color=ft.colors.WHITE),
+                                            ],
+                                            alignment=ft.VerticalAlignment.CENTER
+                                        )
+                                    ),
+                                       ft.PopupMenuItem( #Medicação
+                                            content= ft.Row(
+                                                [   
+                                                    ft.Icon(name=ft.icons.MEDICATION,color=ft.colors.WHITE,size=30),
+                                                    ft.Text("Medicações",size=20, color=ft.colors.WHITE),
+                                                ],
+                                                alignment=ft.VerticalAlignment.CENTER
+                                        )
+                                    ),
+                                       ft.PopupMenuItem( #Sair
+                                               content= ft.Row(
+                                                [   
+                                                    ft.Icon(name=ft.icons.ARROW_BACK,color=ft.colors.WHITE,size=30),
+                                                    ft.Text("Sair",size=20, color=ft.colors.WHITE),
+                                                ],
+                                                alignment=ft.VerticalAlignment.CENTER
+                                        )
+                                    )
+                                ]
+                            ),
+                            
+                        ],
+                        alignment=ft.MainAxisAlignment.CENTER,
+                    ),
+                    margin=ft.margin.only(top=10,left=10)
+                ),
+
+                ft.Container( #Titulo
+                    width=260,
+                    height=65,
+                    bgcolor="#71D4D6",
+                    margin=ft.margin.only(top=10),
+                    content=ft.Row(
+                        [
+                            ft.Text('MYDOCTOR',size=40,weight=ft.FontWeight.BOLD,color=ft.colors.BLACK)
+                        ],
+                        alignment=ft.MainAxisAlignment.CENTER
+                    ),
+                    border_radius=ft.border_radius.all(20)
+                )
+            ]
+        )
+        
+        pg_minha_saude = ft.Container(
+            width=500,
+            height=750,
+            bgcolor=ft.colors.WHITE,
+            border_radius=ft.border_radius.all(20),
+            content=ft.Column(
+                [
+                    header_minha_saude,
+                ]
+            ),
+            margin=ft.margin.only(top=10)
+            
+        )
+        
+        
+        
+        
+        page.add(pg_minha_saude)
+        
+    
+    
     
     #Pagina inicial
     def pagina_inicial():
             page.clean()
-                
+            #Autenticaçao do usuario 
+            def acessar(e, name, senha):
         
+                result = validar_autenticacao(name, senha)
+                
+                if result:
+                    page.clean()
+                    menu_central()  # Certifique-se de que essa função esteja definida
+                    page.update()
+                else:
+                    page.snack_bar = ft.SnackBar(
+                        content=ft.Row(
+                            [
+                                ft.Icon(name=ft.icons.ERROR, color=ft.colors.WHITE,size=30),
+                                ft.Text(value="Usuário ou Senha incorretos", color=ft.colors.WHITE,size=15) 
+                            ],
+                            height=50,
+                        ),
+                        bgcolor=ft.colors.RED
+                    )
+                    page.snack_bar.open = True
+                    page.update()    
+                
             
             # Título - LOGIN
             titulo = ft.Column(
@@ -1043,7 +1190,9 @@ def main(page: ft.Page):
 
             page.add(pg_inicial)
 
+
+
     
-    pagina_inicial()
+    minha_saude()
 
 ft.app(main,assets_dir="assets")
